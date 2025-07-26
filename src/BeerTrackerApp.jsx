@@ -3,7 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } fro
 import { Bell, Beer } from "lucide-react";
 import "./index.css";
 
-const COLORS = ["#facc15", "#f59e0b", "#d97706", "#fbbf24", "#fde68a", "#eab308", "#fcd34d"];
+const COLORS = ["red", "#fcd34d", "orange", "green", "blue", "purple", "pink"];
 const NO_BEER_MESSAGES = [
   "Sei sicuro? Zero birre? Stai bluffando...",
   "Nemmeno una birretta? Sei in punizione?",
@@ -158,7 +158,7 @@ export default function BeerTrackerApp() {
 
   const pieDataMap = {};
   Object.entries(beerLog).forEach(([date, count]) => {
-    const weekday = new Date(date).toLocaleDateString("en-US", { weekday: "long" });
+    const weekday = new Date(date).toLocaleDateString("it-IT", { weekday: "long" });
     pieDataMap[weekday] = (pieDataMap[weekday] || 0) + count;
   });
   const pieData = Object.entries(pieDataMap).map(([name, value]) => ({ name, value }));
@@ -264,7 +264,7 @@ export default function BeerTrackerApp() {
       }}>
         <span role="img" aria-label="fumetto"> {/* Statistica dei tre giorni top */}
       <div className="mt-8 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-xl">
-        <h2 className="text-lg font-bold mb-2 text-yellow-700">💬 certi giorni...</h2>
+        <h2 className="text-lg font-bold mb-2 text-yellow-700">💬 certi giorni... da record</h2>
         <ol className="list-decimal ml-6">
           {topDays.map((day, idx) => (
             <li key={day.date} className="font-semibold text-yellow-800"><h3>
