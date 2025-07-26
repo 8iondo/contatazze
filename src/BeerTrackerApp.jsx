@@ -52,15 +52,29 @@ export default function BeerTrackerApp() {
   const [count, setCount] = useState(0);
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallBtn, setShowInstallBtn] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  const [showDayModal, setShowDayModal] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
-  const todayCount = beerLog[today] || 0;
+
+  // Genera ultimi 7 giorni come opzioni
+  const dateOptions = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const iso = d.toISOString().slice(0, 10);
+    return {
+      value: iso,
+      label: i === 0 ? "Oggi" : d.toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit" })
+    };
+  });
+
+  const todayCount = beerLog[selectedDate] || 0;
 
   const addBeer = () => {
+    let logDate = selectedDate;
+    // Se tra mezzanotte e le 5 e si sta aggiungendo per oggi, registra sul giorno precedente
     const now = new Date();
-    let logDate = now.toISOString().slice(0, 10);
-    // Se tra mezzanotte e le 5, registra sul giorno precedente
-    if (now.getHours() < 5) {
+    if (selectedDate === today && now.getHours() < 5) {
       const prevDay = new Date(now);
       prevDay.setDate(now.getDate() - 1);
       logDate = prevDay.toISOString().slice(0, 10);
@@ -161,12 +175,69 @@ export default function BeerTrackerApp() {
         <Beer className="text-yellow-500" /> ContaTazze
       </h1>
       <div className="mb-4 flex items-center gap-4">
-        
-        <div className="text-lg font-semibold text-yellow-700 totale-birre">
-          Oggi: {todayCount} 🍺 <button
-  onClick={addBeer}><h1>+1</h1></button>
+        <div className="text-lg font-semibold text-yellow-700 totale-birre flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setShowDayModal(true)}
+            className="underline decoration-yellow-400 hover:text-yellow-900"
+            style={{ background: "none", border: "none", cursor: "pointer", padding: 0 }}
+          >
+            
+          </button>
+          <span onClick={() => setShowDayModal(true)}>
+            {dateOptions.find(opt => opt.value === selectedDate)?.label || selectedDate}
+          </span>
+          <span>
+            : {todayCount} 🍺
+          </span>
+          <button onClick={addBeer} className="ml-2 px-3 py-1 bg-yellow-400 rounded font-bold text-yellow-900 hover:bg-yellow-300">
+            +1
+          </button>
         </div>
       </div>
+      {/* Modal per scegliere il giorno */}
+      {showDayModal && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0, left: 0, right: 0, bottom: 0,
+            background: "rgba(0,0,0,0.3)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}
+          onClick={() => setShowDayModal(false)}
+        >
+          <div
+            style={{
+              background: "#fffbe6",
+              border: "2px solid #facc15",
+              borderRadius: "12px",
+              padding: "2em",
+              minWidth: "260px",
+              boxShadow: "0 2px 16px rgba(0,0,0,0.15)",
+              position: "relative"
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <h3 className="mb-2 text-lg font-bold text-yellow-700">Scegli il giorno</h3>
+            <select
+              value={selectedDate}
+              onChange={e => {
+                setSelectedDate(e.target.value);
+                setShowDayModal(false);
+              }}
+              className="w-full px-2 py-2 rounded border border-yellow-400 bg-yellow-50 text-yellow-900 mb-2"
+            >
+              {dateOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
+            </select>
+            <p className="text-sm text-yellow-600">Seleziona un giorno per aggiungere birre</p>
+          </div>
+        </div>
+      )}
       <h2 className="text-xl font-semibold mb-2">Totale giornaliero</h2>
       <BarChart width={600} height={300} data={barData} className="mb-6">
         <XAxis dataKey="date" />
