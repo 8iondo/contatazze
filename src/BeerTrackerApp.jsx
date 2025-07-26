@@ -4,6 +4,44 @@ import { Bell, Beer } from "lucide-react";
 import "./index.css";
 
 const COLORS = ["#facc15", "#f59e0b", "#d97706", "#fbbf24", "#fde68a", "#eab308", "#fcd34d"];
+const NO_BEER_MESSAGES = [
+  "Sei sicuro? Zero birre? Stai bluffando...",
+  "Nemmeno una birretta? Sei in punizione?",
+  "La tua tazza piange di solitudine.",
+  "Oggi dieta ferrea o hai finito i soldi?",
+  "Birra assente, motivazione sconosciuta.",
+  "Non ti riconosco più, dove sono le birre?",
+  "Il barista si sta preoccupando.",
+  "Zero birre, zero party.",
+  "Hai cambiato vita o solo bar?",
+  "La birra ti sta aspettando, non deluderla.",
+  "Oggi il fegato ringrazia.",
+  "Birra in sciopero?",
+  "Hai dimenticato come si beve?",
+  "Il bicchiere è mezzo vuoto... o proprio vuoto.",
+  "Non è da te, tutto ok?",
+  "Il frigorifero è vuoto?",
+  "Stai facendo il bravo?",
+  "Birra virtuale non conta!",
+  "Hai sostituito la birra con l'acqua?",
+  "Il pub ha chiuso?",
+  "Birra in ferie?",
+  "Stai risparmiando per le vacanze?",
+  "Oggi solo caffè?",
+  "Birra in quarantena?",
+  "Hai trovato una nuova passione?",
+  "Birra in sciopero di consumo?",
+  "Il cameriere si chiede dove sei.",
+  "Zero birre, zero storie.",
+  "La birra non ti cerca?",
+  "Hai dimenticato il brindisi?",
+  "Birra in modalità invisibile?",
+  "Oggi astinenza volontaria?",
+  "Il bicchiere è rimasto pulito?",
+  "Birra in pausa pranzo?",
+  "Hai cambiato app?",
+  "Birra in modalità zen?",
+];
 
 export default function BeerTrackerApp() {
   const [beerLog, setBeerLog] = useState(() => {
@@ -17,8 +55,16 @@ export default function BeerTrackerApp() {
   const todayCount = beerLog[today] || 0;
 
   const addBeer = () => {
+    const now = new Date();
+    let logDate = now.toISOString().slice(0, 10);
+    // Se tra mezzanotte e le 5, registra sul giorno precedente
+    if (now.getHours() < 5) {
+      const prevDay = new Date(now);
+      prevDay.setDate(now.getDate() - 1);
+      logDate = prevDay.toISOString().slice(0, 10);
+    }
     const updatedLog = { ...beerLog };
-    updatedLog[today] = (updatedLog[today] || 0) + 1;
+    updatedLog[logDate] = (updatedLog[logDate] || 0) + 1;
     setBeerLog(updatedLog);
     setLastUpdate(Date.now());
   };
@@ -31,12 +77,13 @@ export default function BeerTrackerApp() {
     const checkAndNotify = () => {
       if (Date.now() - lastUpdate > 1000 * 60 * 60 * 5) {
         if (Notification.permission === "granted") {
-          new Notification("Sei sicuro? Zero birre? Stai bluffando...");
+          const msg = NO_BEER_MESSAGES[Math.floor(Math.random() * NO_BEER_MESSAGES.length)];
+          new Notification(msg);
         }
       }
     };
 
-    const schedule = [11, 15, 23];
+    const schedule = [12, 17, 22];
     const timers = schedule.map(hour => {
       const now = new Date();
       const target = new Date();

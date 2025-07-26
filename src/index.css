@@ -21,6 +21,7 @@ body {
   border-radius: 20px;
   background: #fff;
   box-shadow: 0 4px 16px rgba(25,130,196,0.08);
+  margin: 10px;
 }
 
 button {
