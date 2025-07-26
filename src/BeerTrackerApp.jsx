@@ -1,7 +1,7 @@
-
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
 import { Bell, Beer } from "lucide-react";
+import "./index.css";
 
 const COLORS = ["#facc15", "#f59e0b", "#d97706", "#fbbf24", "#fde68a", "#eab308", "#fcd34d"];
 
@@ -11,6 +11,7 @@ export default function BeerTrackerApp() {
     return saved ? JSON.parse(saved) : {};
   });
   const [lastUpdate, setLastUpdate] = useState(() => Date.now());
+  const [count, setCount] = useState(0);
 
   const today = new Date().toISOString().slice(0, 10);
   const todayCount = beerLog[today] || 0;
@@ -67,7 +68,11 @@ export default function BeerTrackerApp() {
     }
   }, []);
 
-  const barData = Object.entries(beerLog).map(([date, count]) => ({ date, count }));
+  // Prepara i dati per il BarChart con date italiane
+  const barData = Object.entries(beerLog).map(([date, count]) => ({
+    date: new Date(date).toLocaleDateString("it-IT"),
+    birre: count
+  }));
 
   const pieDataMap = {};
   Object.entries(beerLog).forEach(([date, count]) => {
@@ -76,19 +81,22 @@ export default function BeerTrackerApp() {
   });
   const pieData = Object.entries(pieDataMap).map(([name, value]) => ({ name, value }));
 
+  // Calcola i tre giorni con il numero più alto (usando la data originale)
+  const topDays = [...Object.entries(beerLog)]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 3)
+    .map(([date, count]) => ({ date, count }));
+
   return (
     <div className="p-4 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 flex items-center gap-2">
         <Beer className="text-yellow-500" /> ContaTazze
       </h1>
       <div className="mb-4 flex items-center gap-4">
-       
-        <button
-  onClick={addBeer}
-  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl shadow-md"
-><h1>+1</h1></button>
-        <div className="text-lg font-semibold text-yellow-700">
-          Oggi: {todayCount} 🍺
+        
+        <div className="text-lg font-semibold text-yellow-700 totale-birre">
+          Oggi: {todayCount} 🍺 <button
+  onClick={addBeer}><h1>+1</h1></button>
         </div>
       </div>
       <h2 className="text-xl font-semibold mb-2">Totale giornaliero</h2>
@@ -96,7 +104,7 @@ export default function BeerTrackerApp() {
         <XAxis dataKey="date" />
         <YAxis />
         <Tooltip />
-        <Bar dataKey="count" fill="#facc15" />
+        <Bar dataKey="birre" fill="#facc15" name="Birre" />
       </BarChart>
       <h2 className="text-xl font-semibold mb-2">Distribuzione per giorno della settimana</h2>
       <PieChart width={400} height={300}>
@@ -107,6 +115,27 @@ export default function BeerTrackerApp() {
         </Pie>
         <Legend />
       </PieChart>
+      <div style={{
+        marginTop: "2em",
+        background: "#fffbe6",
+        border: "3px dashed #222",
+        borderRadius: "12px",
+        padding: "1em",
+        fontSize: "1.1rem"
+      }}>
+        <span role="img" aria-label="fumetto"> {/* Statistica dei tre giorni top */}
+      <div className="mt-8 p-4 bg-yellow-50 border-2 border-yellow-400 rounded-xl">
+        <h2 className="text-lg font-bold mb-2 text-yellow-700">💬 certi giorni...</h2>
+        <ol className="list-decimal ml-6">
+          {topDays.map((day, idx) => (
+            <li key={day.date} className="font-semibold text-yellow-800"><h3>
+              {new Date(day.date).toLocaleDateString("it-IT")}: <span className="font-bold text-red-600"><b>{day.count}</b></span> 🍺
+            </h3></li>
+          ))}
+        </ol>
+      </div></span>
+      </div>
+      
     </div>
   );
 }
