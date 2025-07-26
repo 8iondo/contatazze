@@ -205,7 +205,8 @@ export default function BeerTrackerApp() {
       </div>
       {showInstallBtn && (
         <div className="mb-4 flex items-center gap-2">
-          &nbsp;&nbsp;&nbsp;<button
+          <br></br>
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button
             onClick={handleInstallClick}
             className="flex items-center gap-2 px-4 py-2 bg-orange-400 text-orange-900 rounded-lg shadow font-semibold hover:bg-yellow-300 transition"
             style={{ fontSize: "1.1rem" }}
