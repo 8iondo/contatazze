@@ -215,6 +215,11 @@ export default function BeerTrackerApp() {
           </button>
         </div>
       )}
+      {!showInstallBtn && (
+        <div className="mb-4 text-sm text-gray-600">
+          Per installare usa il menu del browser (<b>⋮</b>) e scegli <b>"Aggiungi a schermata Home"</b>.<br />
+        </div>
+      )}
     </div>
   );
 }
