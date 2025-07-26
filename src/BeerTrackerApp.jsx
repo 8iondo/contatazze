@@ -210,16 +210,12 @@ export default function BeerTrackerApp() {
             className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 rounded-lg shadow font-semibold hover:bg-yellow-300 transition"
             style={{ fontSize: "1.1rem" }}
           >
-            <Bell className="w-5 h-5 text-yellow-700" />
+            <Bell className="w-5 h-5 text-orange-700" />
             Installa App
           </button>
         </div>
       )}
-      {!showInstallBtn && (
-        <div className="mb-4 text-sm text-gray-600">
-          Per installare usa il menu del browser (<b>⋮</b>) e scegli <b>"Aggiungi a schermata Home"</b>.<br />
-        </div>
-      )}
+      
     </div>
   );
 }
