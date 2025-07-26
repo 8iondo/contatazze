@@ -50,6 +50,8 @@ export default function BeerTrackerApp() {
   });
   const [lastUpdate, setLastUpdate] = useState(() => Date.now());
   const [count, setCount] = useState(0);
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
 
   const today = new Date().toISOString().slice(0, 10);
   const todayCount = beerLog[today] || 0;
@@ -114,6 +116,25 @@ export default function BeerTrackerApp() {
       });
     }
   }, []);
+
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      setDeferredPrompt(null);
+      setShowInstallBtn(false);
+    }
+  };
 
   // Prepara i dati per il BarChart con date italiane
   const barData = Object.entries(beerLog).map(([date, count]) => ({
@@ -182,7 +203,18 @@ export default function BeerTrackerApp() {
         </ol>
       </div></span>
       </div>
-      
+      {showInstallBtn && (
+        <div className="mb-4 flex items-center gap-2">
+          <button
+            onClick={handleInstallClick}
+            className="flex items-center gap-2 px-4 py-2 bg-yellow-400 text-yellow-900 rounded-lg shadow font-semibold hover:bg-yellow-300 transition"
+            style={{ fontSize: "1.1rem" }}
+          >
+            <Bell className="w-5 h-5 text-yellow-700" />
+            Installa App
+          </button>
+        </div>
+      )}
     </div>
   );
 }
