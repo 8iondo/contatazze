@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
-import { Button } from "@/components/ui/button";
 import { Bell, Beer } from "lucide-react";
 
 const COLORS = ["#facc15", "#f59e0b", "#d97706", "#fbbf24", "#fde68a", "#eab308", "#fcd34d"];
@@ -83,9 +82,11 @@ export default function BeerTrackerApp() {
         <Beer className="text-yellow-500" /> ContaTazze
       </h1>
       <div className="mb-4 flex items-center gap-4">
-        <Button onClick={addBeer} className="bg-yellow-500 hover:bg-yellow-600 text-white">
-          +1 Birra
-        </Button>
+       
+        <button
+  onClick={addBeer}
+  className="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white font-bold rounded-xl shadow-md"
+><h1>+1</h1></button>
         <div className="text-lg font-semibold text-yellow-700">
           Oggi: {todayCount} 🍺
         </div>
