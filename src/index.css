@@ -15,8 +15,6 @@ body {
 
 #root {
   padding: 2rem;
-  max-width: 600px;
-  margin: auto;
   border: 4px solid #1982c4;
   border-radius: 20px;
   background: #fff;
